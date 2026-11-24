@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Login - DIKSO Vulnerability Scanner</title>
+    <style>
+        body { background-color: #0d1b2a; color: #fff; font-family: Arial, sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
+        .login-box { background: #1b263b; padding: 30px; border-radius: 8px; width: 350px; box-shadow: 0 4px 10px rgba(0,0,0,0.3); }
+        h2 { text-align: center; color: #00b4d8; }
+        .input-group { margin-bottom: 15px; }
+        label { display: block; margin-bottom: 5px; font-size: 14px; }
+        input { width: 100%; padding: 10px; background: #0d1b2a; border: 1px solid #415a77; color: #fff; border-radius: 4px; box-sizing: border-box; }
+        button { width: 100%; padding: 10px; background: #0077b6; border: none; color: white; font-weight: bold; border-radius: 4px; cursor: pointer; }
+        button:hover { background: #0096c7; }
+        .error { color: #ff6b6b; font-size: 13px; text-align: center; margin-bottom: 10px; }
+        .status-msg { color: #00f5d4; font-size: 13px; text-align: center; margin-bottom: 10px; display: none; }
+        .footer-text { text-align: center; margin-top: 15px; font-size: 13px; }
+        .footer-text a { color: #00b4d8; text-decoration: none; }
+    </style>
+</head>
+<body>
+
+    <div class="login-box">
+        <h2>DIKSO Login</h2>
+        
+        {% if error %}
+            <div class="error">{{ error }}</div>
+        {% endif %}
+
+        <div id="status-msg" class="status-msg">[*] Authenticating, please wait...</div>
+
+        <form id="login-form" method="POST" action="/login">
+            <div class="input-group">
+                <label for="username">Username</label>
+                <input type="text" id="username" name="username" required>
+            </div>
+            <div class="input-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password" required>
+            </div>
+            <button type="submit" id="submit-btn">Log In</button>
+        </form>
+
+        <div class="footer-text">
+            Don't have an account? <a href="/register">Sign up</a>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('login-form').addEventListener('submit', function() {
+            // Show status message and disable button to prevent double-clicks
+            document.getElementById('status-msg').style.display = 'block';
+            document.getElementById('submit-btn').textContent = 'Logging in...';
+            document.getElementById('submit-btn').disabled = true;
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>DIKSO Vulnerability Scanner Dashboard</title>
+    <style>
+        body { background-color: #0d1b2a; color: #fff; font-family: Arial, sans-serif; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; }
+        .dashboard-box { background: #1b263b; padding: 30px; border-radius: 8px; width: 600px; box-shadow: 0 4px 10px rgba(0,0,0,0.3); position: relative; }
+        
+        /* Perfectly aligned header and buttons */
+        .header-container { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        .title-area h2 { color: #00b4d8; margin: 0; font-size: 22px; }
+        .subtitle { color: #8d99ae; font-size: 13px; margin-top: 2px; }
+        
+        .auth-buttons { display: flex; gap: 8px; }
+        .auth-btn { background: #0077b6; color: white; padding: 6px 14px; border-radius: 4px; text-decoration: none; font-size: 12px; font-weight: bold; }
+        .auth-btn:hover { background: #0096c7; }
+
+        .input-group { margin-bottom: 15px; }
+        label { display: block; margin-bottom: 5px; font-size: 14px; }
+        input[type="text"] { width: 100%; padding: 10px; background: #0d1b2a; border: 1px solid #415a77; color: #fff; border-radius: 4px; box-sizing: border-box; }
+        button { width: 100%; padding: 10px; background: #0077b6; border: none; color: white; font-weight: bold; border-radius: 4px; cursor: pointer; }
+        button:hover { background: #0096c7; }
+        .console-box { background: #0d1b2a; border: 1px solid #415a77; padding: 15px; border-radius: 4px; height: 150px; overflow-y: auto; font-family: monospace; font-size: 13px; color: #00f5d4; white-space: pre-wrap; margin-top: 15px; }
+    </style>
+</head>
+<body>
+
+    <div class="dashboard-box">
+        <!-- Clean header alignment -->
+        <div class="header-container">
+            <div class="title-area">
+                <h2>DIKSO Vulnerability Scanner</h2>
+                <div class="subtitle">Python-powered DAST Security Dashboard</div>
+            </div>
+            <div class="auth-buttons">
+                <a href="/login" class="auth-btn">Log In</a>
+                <a href="/register" class="auth-btn">Sign Up</a>
+            </div>
+        </div>
+
+        <form id="scanner-form">
+            <div class="input-group">
+                <label for="target_url">Target URL:</label>
+                <input type="text" id="target_url" name="target_url" placeholder="http://localhost/bWAPP/xss_get.php" required>
+            </div>
+            <button type="submit">Initialize & Run Scan</button>
+        </form>
+
+        <div style="margin-top: 20px;">
+            <label>Scan Console & Results:</label>
+            <div id="console-box" class="console-box">Awaiting scan initiation...</div>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('scanner-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const targetUrl = document.getElementById('target_url').value;
+            const consoleBox = document.getElementById('console-box');
+            
+            consoleBox.textContent = "[*] Initializing scan and connecting to backend...\n";
+
+            try {
+                const response = await fetch('/api/scan', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ url: targetUrl })
+                });
+
+                const data = await response.json();
+                
+                if (data.status === 'success') {
+                    consoleBox.textContent = data.logs.join('\n');
+                } else {
+                    consoleBox.textContent = `[!] Scan error: ${data.message}`;
+                }
+
+            } catch (error) {
+                consoleBox.textContent = `[!] Network or server connection failed: ${error}`;
+            }
+        });
+    </script>
+</body>
+</html>
